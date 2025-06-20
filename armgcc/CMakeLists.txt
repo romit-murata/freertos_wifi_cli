@@ -67,6 +67,9 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/../fsl_debug_console_conf.h"
 "${ProjDirPath}/../fsl_os_abstraction_config.h"
 "${ProjDirPath}/../mcux_config.h"
+# Modified by MURATA - Addition Starts Here
+"${ProjDirPath}/../flash_config.c"
+# Modified by MURATA - Addition Ends Here
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE
@@ -77,6 +80,18 @@ set_source_files_properties("${ProjDirPath}/../FreeRTOSConfig.h" PROPERTIES COMP
 set_source_files_properties("${ProjDirPath}/../fsl_os_abstraction_config.h" PROPERTIES COMPONENT_CONFIG_FILE "component_osa_template_config")
 
 include(${SdkRootDirPath}/devices/RW612/all_lib_device.cmake)
+# Modified by MURATA - Addition Starts Here
+# ------------------------------------------------------------------
+#  Search for every flash_config.c under <SDK>/boards/* and mark it
+#  HEADER_FILE_ONLY so nothing in the SDK is compiled.
+# ------------------------------------------------------------------
+file(GLOB_RECURSE SDK_FLASH_CONFIGS
+     "${SdkRootDirPath}/boards/*/flash_config/flash_config.c")
+
+foreach(fc ${SDK_FLASH_CONFIGS})
+    set_source_files_properties(${fc} PROPERTIES HEADER_FILE_ONLY TRUE)
+endforeach()
+# Modified by MURATA - Addition Ends Here
 
 IF(NOT DEFINED TARGET_LINK_SYSTEM_LIBRARIES)  
     SET(TARGET_LINK_SYSTEM_LIBRARIES "-lm -lc -lgcc -lnosys")  
